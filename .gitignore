@@ -1,0 +1,7 @@
+# Ignore everything in this directory
+*
+# Ignore those
+*. pyc
+*. pdf
+*. csv
+*. txt

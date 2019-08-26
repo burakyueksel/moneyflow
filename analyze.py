@@ -4,38 +4,22 @@ author: burak yuksel
 '''
 from lib_readCSVSparda import *
 from lib_report import*
-from fpdf import FPDF
-from PIL import Image
-import os
+#from classify import *
 
 # row data, subracted from the online bank webpage is stored here
-filename = 'test.csv'
+foldername  = 'logs/'
+filename    = '20170817-20190817.csv'
+path_to_data= foldername + filename
 
 # get the big_data from the row data
-big_data = return_CSV_data_sparda(filename)
-
-# post process and organize the big_data
-transaction_time_window_overall_s, current_saldo_f, \
-    date_array_booking_s, date_array_transaction_s, info_array_s, amount_array_f, saldo_array_f = big_data_organizer_sparda(big_data)
+big_data = return_CSV_data_sparda(path_to_data)
 
 # order of this classification is important.
-# Considering there are n elements in this class vector,
-# first n-1 elements shall be all some sort of costs.
-# n-th element shall always be the income.
-
-# FIXME: remove class_vector and go with the first column of class_matrix
-class_vector = ('grocery', 
-                'insurance', 
-                'com_int', 
-                'health', 
-                'transport', 
-                'house',
-                'cash', 
-                'sport', 
-                'creditcard', 
-                'charity', 
-                'income')
-
+# Considering there are n rows in this class matrix, i.e. len(class_matrix)=n,
+# first n-1 rows shall be all some sort of costs.
+# n-th row shall always be the income.
+# first column is dedicated to the classes
+# second column is dedicated to the keywords defining these classes
 #                       class           keywords
 class_matrix        = (('grocery',      ['REWE','ALNATURA','NATURGUT','DM','EDEKA','DENNS','Drogeriemarkt Muller','NETTO','LIDL','flaschenpost','SCHECK-IN','KAUFHOF','BAUHAUS','NORMA','MARKTLADEN']),
                        ('insurance',    ['DEBEK','VERSICHERUNG','versicherung','Rente','Swiss Life','DFV']),
@@ -49,15 +33,22 @@ class_matrix        = (('grocery',      ['REWE','ALNATURA','NATURGUT','DM','EDEK
                        ('charity',      ['Arbeiter-Samariter-Bund']),
                        ('income',       ['ITK','Retina Implant','RETINA','VOLOCOPTER','VIBROSONIC'])
 )
-# class_matrix[:][0][0] -> 'grocery'
-# class_matrix[:][1][0] -> 'insurance'
-# class_matrix[:][2][0] -> 'com_int'
-# class_matrix[:][i][0] ->  class
+# class_matrix[:][0][0] -> 'grocery'  = class_matrix [0][0]
+# class_matrix[:][1][0] -> 'insurance'= class_matrix [1][0]
+# class_matrix[:][2][0] -> 'com_int'  = class_matrix [2][0]
+# class_matrix[:][i][0] -> 'class'    = class_matrix [3][0]
 #
 # class_matrix[0][1][:] -> ['REWE','ALNATURA','NATURGUT','DM','EDEKA','DENNS','Drogeriemarkt Muller']
 # class_matrix[1][1][:] -> ['DEBEK','VERSICHERUNG','versicherung','Rente','Swiss Life','DFV']
 # class_matrix[2][1][:] -> ['UNITYMEDIA','TCHIBO MOBIL','NETFLIX']
 # class_matrix[i][1][:] -> [keywords]
+
+# classify(big_data, class_matrix,path_to_data)
+
+# post process and organize the big_data
+transaction_time_window_overall_s, current_saldo_f, \
+    date_array_booking_s, date_array_transaction_s, info_array_s, amount_array_f, saldo_array_f = big_data_organizer_sparda(big_data)
+
 '''
     per element of the classification, following loop generates and initializes:
     - an info array for storing the information of relevant transaction
@@ -65,8 +56,10 @@ class_matrix        = (('grocery',      ['REWE','ALNATURA','NATURGUT','DM','EDEK
     - a float for summing up the costs/incomes of the element over big_data
 '''
 #create_data_struct(classifications)
-for element in class_vector:
-    #exec ("%s = %f" % (element+'_array',1.0))
+#for element in class_vector:
+   ##exec ("%s = %f" % (element+'_array',1.0))
+for cnt_class in range(len(class_matrix)):
+    element = class_matrix[cnt_class][0]
     vars()[element+'_array']=[]
     vars()[element+'_indexes']=[]
     vars()[element+'_amounts']=0.0
@@ -184,6 +177,7 @@ with open ('not_recognized_income.txt', 'w+') as writeFile:
 
 messages = printer(all_costs,all_incomes,current_saldo_f,saldo_array_f,transaction_time_window_overall_s)
 
+# this is needed for generating the figures and saving them in figure folder
 plotter(all_costs, all_incomes, grocery_amounts, insurance_amounts, com_int_amounts, health_amounts, \
                     transport_amounts, house_amounts, cash_amounts, sport_amounts, creditcard_amounts, charity_amounts,\
                     total_notfound_cost_amounts, transaction_time_window_overall_s)

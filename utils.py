@@ -136,3 +136,4 @@ def create_data_struct(classifications):
         vars()[element+'_amounts']=0.0
     # FIXME: how can I return all the created variables automatically? Making them global? 
     #        how can I make them global while using vars() ?
+    # I think vars() is not working when calling from a function. It only works when calling in main level. Find a workaround

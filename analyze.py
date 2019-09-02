@@ -4,7 +4,7 @@ author: burak yuksel
 '''
 from lib_readCSVSparda import *
 from lib_report import*
-#from classify import *
+from classify import *
 
 # row data, subracted from the online bank webpage is stored here
 foldername  = 'logs/'
@@ -43,18 +43,6 @@ class_matrix        = (('grocery',      ['REWE','ALNATURA','NATURGUT','DM','EDEK
 # class_matrix[2][1][:] -> ['UNITYMEDIA','TCHIBO MOBIL','NETFLIX']
 # class_matrix[i][1][:] -> [keywords]
 
-# classify(big_data, class_matrix,path_to_data)
-
-# post process and organize the big_data
-transaction_time_window_overall_s, current_saldo_f, \
-    date_array_booking_s, date_array_transaction_s, info_array_s, amount_array_f, saldo_array_f = big_data_organizer_sparda(big_data)
-
-'''
-    per element of the classification, following loop generates and initializes:
-    - an info array for storing the information of relevant transaction
-    - an index array for storing the index of the element in big_data
-    - a float for summing up the costs/incomes of the element over big_data
-'''
 #create_data_struct(classifications)
 #for element in class_vector:
    ##exec ("%s = %f" % (element+'_array',1.0))
@@ -64,11 +52,38 @@ for cnt_class in range(len(class_matrix)):
     vars()[element+'_indexes']=[]
     vars()[element+'_amounts']=0.0
 
+'''
+variables_array_names   = []
+variables_indexes_names = []
+variables_amounts_names = []
+for cnt_class in range(len(class_matrix)):
+    variables_array_names.append(class_matrix[cnt_class][0]+'_array')
+    variables_indexes_names.append(class_matrix[cnt_class][0]+'_indexes')
+    variables_amounts_names.append(class_matrix[cnt_class][0]+'_amounts')
+
+import collections
+variables_arrays = collections.namedtuple('Variables', variables_array_names)._make([] for _ in variables_array_names)
+variables_indexes= collections.namedtuple('Variables', variables_indexes_names)._make([] for _ in variables_indexes_names)
+variables_amounts= collections.namedtuple('Variables', variables_amounts_names)._make(0.0 for _ in variables_amounts_names)
+'''
+
 # init other variables
 found_cost_indexes      = []
 notfound_costs_indexes  = []
 notfound_income_indexes = []
 
+# cost_information, income_information, time_information = classify(big_data, class_matrix)
+
+# post process and organize the big_data
+transaction_time_window_overall_s, current_saldo_f, \
+    date_array_booking_s, date_array_transaction_s, info_array_s, amount_array_f, saldo_array_f = big_data_organizer_sparda(big_data)
+
+'''
+    per row of the class_matrix, following loop generates and initializes:
+    - an info array for storing the information of relevant transaction
+    - an index array for storing the index of the element in big_data
+    - a float for summing up the costs/incomes of the element over big_data
+'''
 # write info_array to a file
 write_to_file_owerwrite(info_array_s,'infos.txt')
 
@@ -183,6 +198,6 @@ plotter(all_costs, all_incomes, grocery_amounts, insurance_amounts, com_int_amou
                     total_notfound_cost_amounts, transaction_time_window_overall_s)
 
 path_to_plots = '/mnt/c/Users/buyue/code/moneyflow/plots'
-path_to_pdf   = filename+'report.pdf'
+path_to_pdf   = path_to_data+'report.pdf'
 reporter(path_to_plots,path_to_pdf,messages)
 

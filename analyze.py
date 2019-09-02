@@ -4,7 +4,7 @@ author: burak yuksel
 '''
 from lib_readCSVSparda import *
 from lib_report import*
-from classify import *
+# from classify import *
 
 # row data, subracted from the online bank webpage is stored here
 foldername  = 'logs/'
@@ -87,14 +87,17 @@ transaction_time_window_overall_s, current_saldo_f, \
 # write info_array to a file
 write_to_file_owerwrite(info_array_s,'infos.txt')
 
-'''
+
 # experimenting: factorize the following code for writing all amounts etc to the specific classes.
 for info in info_array_s:
     for i in range(len(class_matrix)-1):
-        if any(keyword in info for keyword in class_matrix[0][1][:]):
+        if any(keyword in info for keyword in class_matrix[i][1][:]):
             vars()[class_matrix[:][i][0]+'_amounts'], vars()[class_matrix[:][i][0]+'_array'], vars()[class_matrix[:][i][0]+'_indexes'], found_cost_indexes = \
             cost_organizer(info, info_array_s, amount_array_f, vars()[class_matrix[:][i][0]+'_amounts'], \
             vars()[class_matrix[:][i][0]+'_array'], vars()[class_matrix[:][i][0]+'_indexes'], found_cost_indexes)
+    if any(keyword in info for keyword in class_matrix[10][1][:]):
+        income_array.append(info)
+        income_indexes.append( info_array_s.index(info))
 '''
 # search keywords in information array for classificaton
 for info in info_array_s:
@@ -142,6 +145,7 @@ for info in info_array_s:
     if any(keyword in info for keyword in class_matrix[10][1][:]):
         income_array.append(info)
         income_indexes.append( info_array_s.index(info))
+'''
 
 found_cost_indexes_sum = len(grocery_indexes) + len(insurance_indexes) + len(com_int_indexes) + \
       len(health_indexes) + len(transport_indexes) + len(house_indexes) + \

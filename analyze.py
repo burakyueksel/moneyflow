@@ -21,14 +21,14 @@ big_data = return_CSV_data_sparda(path_to_data)
 # first column is dedicated to the classes
 # second column is dedicated to the keywords defining these classes
 #                       class           keywords
-class_matrix        = (('grocery',      ['REWE','ALNATURA','NATURGUT','DM','EDEKA','DENNS','Drogeriemarkt Muller','NETTO','LIDL','flaschenpost','SCHECK-IN','KAUFHOF','BAUHAUS','NORMA','MARKTLADEN']),
+class_matrix        = (('grocery',      ['REWE','ALNATURA','NATURGUT','DM','EDEKA','DENNS','Drogeriemarkt Muller','NETTO','LIDL','flaschenpost','SCHECK-IN','KAUFHOF','BAUHAUS','NORMA','MARKTLADEN','SPEICHER']),
                        ('insurance',    ['DEBEK','VERSICHERUNG','versicherung','Rente','Swiss Life','DFV']),
                        ('com_int',      ['UNITYMEDIA','TCHIBO MOBIL','NETFLIX','Rundfunk']),
                        ('health',       ['APOTHEKE']),
                        ('transport',    ['DB Vertrieb','Bus','LOGPAY','StadtMobil CarSharing','RNV']),
                        ('house',        ['EnBW','Stadtwerk','MIETE','VERENA VOLK']),
                        ('cash',         ['BBBANK','60090800 GAA','KartenumsatzCardProcess','VOLKSBANK','SANTANDER']),
-                       ('sport',        ['SCHWIMM','CAFE KRAFT','BOULDERHAUS','BOULDERHAL']),
+                       ('sport',        ['SCHWIMM','CAFE KRAFT','BOULDERHAUS','BOULDERHAL','ALBTHERMEN']),
                        ('creditcard',   ['MASTERCARD']),
                        ('charity',      ['Arbeiter-Samariter-Bund']),
                        ('income',       ['ITK','Retina Implant','RETINA','VOLOCOPTER','VIBROSONIC'])
@@ -51,6 +51,10 @@ for cnt_class in range(len(class_matrix)):
     vars()[element+'_array']=[]
     vars()[element+'_indexes']=[]
     vars()[element+'_amounts']=0.0
+
+# Experimental: a better way of creating new variables automatically.
+# TODO: Use this instead of vars(). This way you can push that code into another function
+# without need of global definitions, e.g. using global()
 
 '''
 variables_array_names   = []
@@ -87,66 +91,22 @@ transaction_time_window_overall_s, current_saldo_f, \
 # write info_array to a file
 write_to_file_owerwrite(info_array_s,'infos.txt')
 
+# write important in a better format tp be used later if needed
+write_to_file_owerwrite_summary([date_array_booking_s,date_array_transaction_s,amount_array_f,info_array_s],'summary.txt')
 
-# experimenting: factorize the following code for writing all amounts etc to the specific classes.
+# factorize the following code for writing all amounts etc to the specific classes.
+# search keywords in information array for classificaton
 for info in info_array_s:
     for i in range(len(class_matrix)-1):
         if any(keyword in info for keyword in class_matrix[i][1][:]):
-            vars()[class_matrix[:][i][0]+'_amounts'], vars()[class_matrix[:][i][0]+'_array'], vars()[class_matrix[:][i][0]+'_indexes'], found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, vars()[class_matrix[:][i][0]+'_amounts'], \
-            vars()[class_matrix[:][i][0]+'_array'], vars()[class_matrix[:][i][0]+'_indexes'], found_cost_indexes)
-    if any(keyword in info for keyword in class_matrix[10][1][:]):
+            globals()[class_matrix[:][i][0]+'_amounts'], globals()[class_matrix[:][i][0]+'_array'], globals()[class_matrix[:][i][0]+'_indexes'], found_cost_indexes = \
+            cost_organizer(info, info_array_s, amount_array_f, globals()[class_matrix[:][i][0]+'_amounts'], \
+            globals()[class_matrix[:][i][0]+'_array'], globals()[class_matrix[:][i][0]+'_indexes'], found_cost_indexes)
+    if any(keyword in info for keyword in class_matrix[-1][1][:]):
         income_array.append(info)
         income_indexes.append( info_array_s.index(info))
-'''
-# search keywords in information array for classificaton
-for info in info_array_s:
-    if any(keyword in info for keyword in class_matrix[0][1][:]):
-        grocery_amounts, grocery_array, grocery_indexes, found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, grocery_amounts, \
-                grocery_array, grocery_indexes, found_cost_indexes)
-    if any(keyword in info for keyword in class_matrix[1][1][:]):
-        insurance_amounts, insurance_array, insurance_indexes, found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, insurance_amounts, \
-                insurance_array, insurance_indexes, found_cost_indexes)
-    if any(keyword in info for keyword in class_matrix[2][1][:]):
-        com_int_amounts, com_int_array, com_int_indexes, found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, com_int_amounts, \
-                com_int_array, com_int_indexes, found_cost_indexes)
-    if any(keyword in info for keyword in class_matrix[3][1][:]):
-        health_amounts, health_array, health_indexes, found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, health_amounts, \
-                health_array, health_indexes, found_cost_indexes)        
-    if any(keyword in info for keyword in class_matrix[4][1][:]):
-        transport_amounts, transport_array, transport_indexes, found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, transport_amounts, \
-                transport_array, transport_indexes, found_cost_indexes)  
-    if any(keyword in info for keyword in class_matrix[5][1][:]):
-        house_amounts, house_array, house_indexes, found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, house_amounts, \
-                house_array, house_indexes, found_cost_indexes)
-    if any(keyword in info for keyword in class_matrix[6][1][:]):
-        cash_amounts, cash_array, cash_indexes, found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, cash_amounts, \
-                cash_array, cash_indexes, found_cost_indexes)
-    if any(keyword in info for keyword in class_matrix[7][1][:]):
-        sport_amounts, sport_array, sport_indexes, found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, sport_amounts, \
-                sport_array, sport_indexes, found_cost_indexes)
-    if any(keyword in info for keyword in class_matrix[8][1][:]):
-        creditcard_amounts, creditcard_array, creditcard_indexes, found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, creditcard_amounts, \
-                creditcard_array, creditcard_indexes, found_cost_indexes)
-    if any(keyword in info for keyword in class_matrix[9][1][:]):
-        charity_amounts, charity_array, charity_indexes, found_cost_indexes = \
-            cost_organizer(info, info_array_s, amount_array_f, charity_amounts, \
-                charity_array, charity_indexes, found_cost_indexes)
-    # incomes
-    if any(keyword in info for keyword in class_matrix[10][1][:]):
-        income_array.append(info)
-        income_indexes.append( info_array_s.index(info))
-'''
 
+# found costs and incomes
 found_cost_indexes_sum = len(grocery_indexes) + len(insurance_indexes) + len(com_int_indexes) + \
       len(health_indexes) + len(transport_indexes) + len(house_indexes) + \
       len(cash_indexes) + len(sport_indexes) + \

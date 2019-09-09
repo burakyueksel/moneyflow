@@ -76,6 +76,12 @@ def write_to_file_owerwrite(data,filename):
         for info in data:
             writeFile.write(info+"\n")
 
+def write_to_file_owerwrite_summary(data,filename):
+    # write a data to a file. If another file exists with the same name, overwrite it.
+    with open (filename, 'w+') as writeFile:
+        for cnt in range(len(data[0])):
+            writeFile.write("%s\t %s\t %4.3f\t\t %s\n" % (data[0][cnt], data[1][cnt], data[2][cnt], data[3][cnt]))
+
 def write_to_file_add(data,filename):
     # write a data to a file. If another file exists with the same name, add on it.
     with open (filename, 'a') as writeFile:

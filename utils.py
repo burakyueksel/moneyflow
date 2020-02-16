@@ -45,7 +45,7 @@ def big_data_organizer_sparda(big_data):
 
     # First row of big_data, i.e. big_data[:][x][0] holds a summary information. Get them.
     # get the overall time window of the transactions
-    transaction_time_window_overall_s = big_data[:][0][0] , big_data[:][1][0]
+    transaction_time_window_overall_s = big_data[:][0][-1] , big_data[:][1][-2]
     # the current saldo, when this data was subtracted
     current_saldo_f                   = big_data[:][3][0] # also = big_data[:][4][0]
 

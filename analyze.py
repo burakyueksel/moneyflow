@@ -8,11 +8,15 @@ from lib_report import*
 
 # row data, subracted from the online bank webpage is stored here
 foldername  = 'logs/'
-filename    = '20170817-20190817.csv'
+filename    = '20190601-20200216.csv' # 20190801-20200103.csv
 path_to_data= foldername + filename
 
 # get the big_data from the row data
 big_data = return_CSV_data_sparda(path_to_data)
+
+big_data_reversed=big_data
+for x in range(0,len(big_data)): big_data_reversed[x]=big_data[x][::-1]
+big_data = big_data_reversed
 
 # order of this classification is important.
 # Considering there are n rows in this class matrix, i.e. len(class_matrix)=n,
@@ -21,14 +25,14 @@ big_data = return_CSV_data_sparda(path_to_data)
 # first column is dedicated to the classes
 # second column is dedicated to the keywords defining these classes
 #                       class           keywords
-class_matrix        = (('grocery',      ['REWE','ALNATURA','NATURGUT','DM','EDEKA','DENNS','Drogeriemarkt Muller','NETTO','LIDL','flaschenpost','SCHECK-IN','KAUFHOF','BAUHAUS','NORMA','MARKTLADEN','SPEICHER']),
+class_matrix        = (('grocery',      ['SATURN','REWE','ALNATURA','NATURGUT','DM','EDEKA','DENNS','Drogeriemarkt Muller','NETTO','LIDL','flaschenpost','SCHECK-IN','KAUFHOF','BAUHAUS','NORMA','MARKTLADEN','SPEICHER','ROSSMANN']),
                        ('insurance',    ['DEBEK','VERSICHERUNG','versicherung','Rente','Swiss Life','DFV']),
                        ('com_int',      ['UNITYMEDIA','TCHIBO MOBIL','NETFLIX','Rundfunk']),
                        ('health',       ['APOTHEKE']),
-                       ('transport',    ['DB Vertrieb','Bus','LOGPAY','StadtMobil CarSharing','RNV']),
-                       ('house',        ['EnBW','Stadtwerk','MIETE','VERENA VOLK']),
-                       ('cash',         ['BBBANK','60090800 GAA','KartenumsatzCardProcess','VOLKSBANK','SANTANDER']),
-                       ('sport',        ['SCHWIMM','CAFE KRAFT','BOULDERHAUS','BOULDERHAL','ALBTHERMEN']),
+                       ('transport',    ['DB Vertrieb','Bus','LOGPAY','StadtMobil CarSharing','RNV','Rail']),
+                       ('house',        ['LENA WILLHAUCK', 'EnBW','Stadtwerk','MIETE','VERENA VOLK','KAUTION']),
+                       ('cash',         ['RAIFFEISENBANK','BBBANK','60090800 GAA','KartenumsatzCardProcess','VOLKSBANK','SANTANDER','TARGOBANK']),
+                       ('sport',        ['AQWA','SKI','VENICE','SCHWIMM','CAFE KRAFT','BOULDERHAUS','BOULDERHAL','ALBTHERMEN','SPORT','BOULDER']),
                        ('creditcard',   ['MASTERCARD']),
                        ('charity',      ['Arbeiter-Samariter-Bund']),
                        ('income',       ['ITK','Retina Implant','RETINA','VOLOCOPTER','VIBROSONIC'])
@@ -91,7 +95,7 @@ transaction_time_window_overall_s, current_saldo_f, \
 # write info_array to a file
 write_to_file_owerwrite(info_array_s,'infos.txt')
 
-# write important in a better format tp be used later if needed
+# write important in a better format to be used later if needed
 write_to_file_owerwrite_summary([date_array_booking_s,date_array_transaction_s,amount_array_f,info_array_s],'summary.txt')
 
 # factorize the following code for writing all amounts etc to the specific classes.
@@ -157,7 +161,7 @@ with open ('not_recognized_income.txt', 'w+') as writeFile:
 messages = printer(all_costs,all_incomes,current_saldo_f,saldo_array_f,transaction_time_window_overall_s)
 
 # this is needed for generating the figures and saving them in figure folder
-plotter(all_costs, all_incomes, grocery_amounts, insurance_amounts, com_int_amounts, health_amounts, \
+plotter(saldo_array_f, date_array_transaction_s,all_costs, all_incomes, grocery_amounts, insurance_amounts, com_int_amounts, health_amounts, \
                     transport_amounts, house_amounts, cash_amounts, sport_amounts, creditcard_amounts, charity_amounts,\
                     total_notfound_cost_amounts, transaction_time_window_overall_s)
 

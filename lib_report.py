@@ -7,7 +7,7 @@ from fpdf import FPDF
 from PIL import Image
 import os
 
-def plotter(all_costs, all_incomes, grocery_amounts, insurance_amounts, com_int_amounts, health_amounts, transport_amounts, house_amounts, cash_amounts, sport_amounts, creditcard_amounts, charity_amounts, total_notfound_cost_amounts, transaction_time_window_overall_s):
+def plotter(saldo_array_f, date_array_transaction_s, all_costs, all_incomes, grocery_amounts, insurance_amounts, com_int_amounts, health_amounts, transport_amounts, house_amounts, cash_amounts, sport_amounts, creditcard_amounts, charity_amounts, total_notfound_cost_amounts, transaction_time_window_overall_s):
     # Data to plot
     labels = 'Grocery', 'Insurance', 'COM', 'Health', 'Transport', 'House', 'Cash', 'Sport', 'CreditCard', 'Charity', 'Others'
     sizes = [grocery_amounts/all_costs*100, insurance_amounts/all_costs*100, com_int_amounts/all_costs*100, health_amounts/all_costs*100, \
@@ -35,6 +35,9 @@ def plotter(all_costs, all_incomes, grocery_amounts, insurance_amounts, com_int_
     explode = (0.1, 0)
     title = 'Spent vs Saved % of all income between {} and {}'.format(transaction_time_window_overall_s[0],transaction_time_window_overall_s[1])
     plot_pie(sizes, explode, labels, colors, title)
+
+    plot_plain(saldo_array_f,'step','saldo')
+    #plot_plain2(date_array_transaction_s,saldo_array_f,'date','saldo')
 
 def printer(all_costs,all_incomes,current_saldo_f,saldo_array_f,transaction_time_window_overall_s):
 
